@@ -4,7 +4,7 @@ import TranscribeService from "../services/TranscribeService";
 import fs from "fs";
 
 // this controller should work on summaries the user has saved 
-class SummaryController{
+export default class SummaryController{
     summaryRepo : SummaryRepo; 
     transcribeService :TranscribeService; 
     constructor(summaryRepo : SummaryRepo, transcribeService : TranscribeService){
