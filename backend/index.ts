@@ -1,5 +1,6 @@
 import express,{ Express, Request, Response } from "express";
 import './loadEnv.ts'
+ 
 // declare the app
 const app : Express = express();
 const port : Number = 3000;
