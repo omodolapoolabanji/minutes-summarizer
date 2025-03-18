@@ -21,4 +21,6 @@ export default class SummaryRepo{
     getAllSummaries(): Array<Summary>{
         return Array.from(this.summaries.values());
     }
+
+  
 }

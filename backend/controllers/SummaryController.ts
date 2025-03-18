@@ -28,11 +28,26 @@ export default class SummaryController{
     async transcribeAudio(req: Request & { file: Express.Multer.File }, res: Response){
         // the audio data gets sent and the transcription service that processes it
         // call the service to handle to upload and transcription
+       try{
+        if(!req.file){
+            return res.status(400).json({message: 'No audio data uploaded!'})
+        }
         await this.transcribeService.storeAudioData(req.file);
         const fileName = req.file.originalname;
         //call the transcription service to handle the audio data
         const transcription = await this.transcribeService.transcribeAudio(fileName);
-        return res.json({transcription: transcription});
+        return res.json({transcription: transcription});}
+        catch(error){
+            console.error(error);
+            return res.status(400).json({message: 'Error transcribing audio data!'})
+        }
+    }
+    async testSummaryEndpoint(req: Request, res: Response){
+        try{
+            return res.send("This endpoint works I guess[?]"); }
+        catch(error){
+            return res.status(400).json({message:"there was an error trying to recieve test message from the server"}); 
+        }
     }
      
 
