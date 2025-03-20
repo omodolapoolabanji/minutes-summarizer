@@ -13,8 +13,8 @@ export default class TranscribeService{
     model: any; 
 
     constructor(fileName ?: string, sampleRate: number = 16000, bufferSize : number = 4000){
-        this.MODEL_PATH = `../resources/models/${this.MODEL_NAME}`;
-        this.FILE_NAME = '../static/audio_data' + fileName; 
+        this.MODEL_PATH = `backend/resources/vosk-models/${this.MODEL_NAME}`;
+        this.FILE_NAME = 'backend/static/audio_data/' + fileName; 
         this.SAMPLE_RATE = sampleRate; 
         this.BUFFER_SIZE = bufferSize; 
         vosk.setLogLevel(0); 
@@ -22,6 +22,7 @@ export default class TranscribeService{
 
     initModel():void{
         this.model = new vosk.Model(this.MODEL_PATH); 
+        
     }
 
     async transcribeAudio(fileName?:string):Promise<string>{
@@ -33,11 +34,19 @@ export default class TranscribeService{
             console.error("No vosk models specified for transcription handling!")
         }
         else if(fileName){
-            this.FILE_NAME = fileName
+            this.FILE_NAME = 'backend/static/audio_data/'+fileName
         }
         //checks for whether the specified model/filename exist in the resource directory
+        console.log("filename "+ this.FILE_NAME, "model path "+this.MODEL_PATH)
+
         if(!fs.existsSync(this.FILE_NAME) || !fs.existsSync(this.MODEL_PATH)){
-            console.error('Resource or data needed for transcription not specified!'); 
+            if(!fs.existsSync(this.FILE_NAME)){
+                console.error("Audio file not found in specified directory!")
+            }
+            else{
+                console.error('Vosk Model not found in required path!'); 
+            }
+            
         }
         this.initModel(); 
         const rec = new vosk.Recognizer({model: this.model, sampleRate: this.SAMPLE_RATE});
@@ -68,18 +77,21 @@ export default class TranscribeService{
 
     }
 
-    async storeAudioData(file: Express.Multer.File):Promise<string>{
-        // store the audio data in the static directory
-        const fileName = file.originalname; 
-        const filePath = `../static/audio_data/${fileName}`; 
-        // check whether file is wav
-        if(file.mimetype !== 'audio/wav'){
-            throw new Error('File is not a wav file!'); 
+    cleanUp(): void{ 
+        if (!this.FILE_NAME){
+            throw new Error('File path not specified for cleanup! ')
         }
-        fs.writeFileSync(filePath, file.buffer); 
-        return fileName; 
-
+        fs.unlink(this.FILE_NAME, (err)=>{
+            if(err){
+                console.error(err)
+            }
+            else{
+                console.log(`Deleted file at ${this.FILE_NAME}`)
+            }
+        } )
     }
+
+   
     
 
     

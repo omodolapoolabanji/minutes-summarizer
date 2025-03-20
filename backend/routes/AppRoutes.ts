@@ -14,7 +14,7 @@ export default class AppRoutes{
         this.summaryController = summaryController; 
         this.authenticationController = authenticationController; 
         this.router = express.Router(); 
-        this.upload = multer({dest: 'static/audio_data'});
+        this.upload = multer({dest: 'backend/static/audio_data'});
         this.initAuthenticationRoutes() ;
         this.initSummaryRoutes();
         
@@ -24,9 +24,19 @@ export default class AppRoutes{
     this.router.get('/summaries', async (req: Request, res: Response)=>{
         await this.summaryController.getUserSummaries(req, res); 
     }); 
-    this.router.post('/summaries/transcribe',this.upload.single('file'), async(req: Request & { file: Express.Multer.File }, res: Response)=>{
-        await this.summaryController.transcribeAudio(req, res); 
-    })
+
+    // TO_FIX: endpoint sending errors via response
+    this.router.post('/summaries/transcribe',this.upload.single('file'), async(req: Request ,res: Response)=>{
+        //specifies the file name in the field needs to be 'file'
+        console.log(req.file);
+        try{await this.summaryController.transcribeAudio(req, res); }   
+        catch(error){
+            console.error(error);
+            return res.status(400).json({message: 'Error transcribing audio data!'})
+        }}
+        
+        
+    )
     this.router.get('/summaries/test',   async (req: Request, res: Response)=>{ 
         await this.summaryController.testSummaryEndpoint(req, res); 
     })

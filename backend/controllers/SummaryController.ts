@@ -25,17 +25,18 @@ export default class SummaryController{
     }
     
     // get the audio data from the frontend : POST req
-    async transcribeAudio(req: Request & { file: Express.Multer.File }, res: Response){
+    async transcribeAudio(req: Request , res: Response){
         // the audio data gets sent and the transcription service that processes it
         // call the service to handle to upload and transcription
        try{
         if(!req.file){
             return res.status(400).json({message: 'No audio data uploaded!'})
         }
-        await this.transcribeService.storeAudioData(req.file);
-        const fileName = req.file.originalname;
+        
+        const fileName = req.file.filename;
         //call the transcription service to handle the audio data
         const transcription = await this.transcribeService.transcribeAudio(fileName);
+        this.transcribeService.cleanUp(); 
         return res.json({transcription: transcription});}
         catch(error){
             console.error(error);
