@@ -2,14 +2,17 @@ import SummaryRepo from "../repositories/SummaryRepo";
 import { Request, Response } from "express";
 import TranscribeService from "../services/TranscribeService";
 import fs from "fs";
+import SummaryService from "../services/SummaryService";
 
 // this controller should work on summaries the user has saved 
 export default class SummaryController{
     summaryRepo : SummaryRepo; 
     transcribeService :TranscribeService; 
-    constructor(summaryRepo : SummaryRepo, transcribeService : TranscribeService){
+    summaryService : SummaryService
+    constructor(summaryRepo : SummaryRepo, transcribeService : TranscribeService, summaryService : SummaryService){
         this.summaryRepo = summaryRepo; 
         this.transcribeService = transcribeService; 
+        this.summaryService = summaryService; 
     }
     // serves the frontend user summaries
     async getUserSummaries(req : Request, res : Response){
@@ -36,8 +39,9 @@ export default class SummaryController{
         const fileName = req.file.filename;
         //call the transcription service to handle the audio data
         const transcription = await this.transcribeService.transcribeAudio(fileName);
+        const response  = await this.summaryService.getSummaryFromModel(transcription); 
         this.transcribeService.cleanUp(); 
-        return res.json({transcription: transcription});}
+        return res.json({summary: response});}
         catch(error){
             console.error(error);
             return res.status(400).json({message: 'Error transcribing audio data!'})

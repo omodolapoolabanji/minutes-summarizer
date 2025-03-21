@@ -6,6 +6,7 @@ import TranscribeService from "./services/TranscribeService.ts";
 import SummaryRepo from "./repositories/SummaryRepo.ts";
 import AuthenticationController from "./controllers/AuthenticationController.ts";
 import UserRepo from "./repositories/UserRepo.ts";
+import SummaryService from "./services/SummaryService.ts";
  
 // declare the app
 const app : Express = express();
@@ -18,7 +19,8 @@ app.use(express.json());
 const summaryRepo : SummaryRepo = new SummaryRepo(); 
 const userRepo:UserRepo = new UserRepo(); 
 const transcribeService: TranscribeService = new TranscribeService(); 
-const summaryController : SummaryController = new SummaryController(summaryRepo, transcribeService);
+const summaryService : SummaryService = new SummaryService(); 
+const summaryController : SummaryController = new SummaryController(summaryRepo, transcribeService, summaryService);
 const authenticationController : AuthenticationController = new AuthenticationController(userRepo); 
 const appRoutes : AppRoutes = new AppRoutes(summaryController,authenticationController ); 
 
