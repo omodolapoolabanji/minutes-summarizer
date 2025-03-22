@@ -1,9 +1,27 @@
 import { compare, hash } from "bcryptjs";
 import { User, IUser } from "../models/UserModel";
 import jwt from  "jsonwebtoken"  
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import { Request } from "express";
 export default class AuthService{
     constructor(){
+        this.configurePassport(); 
+    }
 
+    async configurePassport(){
+        passport.use(
+            new LocalStrategy(async (username:string,password: string, done)=>{
+               try{ const user = await User.findOne({username} )
+                    if(!user || await user.verifyPassword(password) ) return done(null, false, {message: 'Invalid Credentials!'})
+                    else return done(null, user)
+                }
+                catch(error){
+                    console.error(error)
+                    return done(error)
+                }
+                 }           )
+        )
     }
 
     async register(username: string, password : string){
@@ -22,7 +40,6 @@ export default class AuthService{
         else return null
     }
 
-    
 
     
 }

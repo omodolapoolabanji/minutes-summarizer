@@ -8,6 +8,7 @@ import AuthenticationController from "./controllers/AuthenticationController.ts"
 import UserRepo from "./repositories/UserRepo.ts";
 import SummaryService from "./services/SummaryService.ts";
 import mongoose from "mongoose";
+import AuthService from "./services/AuthenticationService.ts";
  
 // declare the app
 const app : Express = express();
@@ -23,10 +24,11 @@ else console.error("Failed to connect to database!")
 //add depenedencies
 const summaryRepo : SummaryRepo = new SummaryRepo(); 
 const userRepo:UserRepo = new UserRepo(); 
+const authService : AuthService = new AuthService(); 
 const transcribeService: TranscribeService = new TranscribeService(); 
 const summaryService : SummaryService = new SummaryService(); 
 const summaryController : SummaryController = new SummaryController(summaryRepo, transcribeService, summaryService);
-const authenticationController : AuthenticationController = new AuthenticationController(userRepo); 
+const authenticationController : AuthenticationController = new AuthenticationController(userRepo, authService); 
 const appRoutes : AppRoutes = new AppRoutes(summaryController,authenticationController ); 
 
 const router : express.Router = appRoutes.getRoutes(); 

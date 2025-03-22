@@ -49,8 +49,8 @@ export default class AppRoutes{
     this.router.post('/auth/register', async(req: Request, res: Response)=>{
        await this.authenticationController.signup(req, res); 
     });
-    this.router.post('/auth/login', async(req: Request, res: Response)=>{
-        await this.authenticationController.login(req, res); 
+    this.router.post('/auth/login', async(req: Request, res: Response, next : any)=>{
+        await this.authenticationController.login(req, res, next); 
     });
    }
 

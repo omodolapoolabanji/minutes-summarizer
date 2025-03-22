@@ -54,6 +54,14 @@ export default class SummaryController{
             return res.status(400).json({message:"there was an error trying to recieve test message from the server"}); 
         }
     }
+
+    async addToSummary(){
+
+    }
+    async deleteFromSummary(){
+
+    }
+    
      
 
     
