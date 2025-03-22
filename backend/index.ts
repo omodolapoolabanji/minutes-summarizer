@@ -7,6 +7,7 @@ import SummaryRepo from "./repositories/SummaryRepo.ts";
 import AuthenticationController from "./controllers/AuthenticationController.ts";
 import UserRepo from "./repositories/UserRepo.ts";
 import SummaryService from "./services/SummaryService.ts";
+import mongoose from "mongoose";
  
 // declare the app
 const app : Express = express();
@@ -14,6 +15,10 @@ const port : Number = 3000;
 
 
 app.use(express.json()); 
+//connect to the database
+const dbUrl :string | undefined = process.env.DB_URI || undefined
+if(dbUrl)mongoose.connect(dbUrl).then(()=>console.log('Connected to database!')).catch((error)=> console.error(error))
+else console.error("Failed to connect to database!")
 
 //add depenedencies
 const summaryRepo : SummaryRepo = new SummaryRepo(); 
