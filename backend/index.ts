@@ -9,7 +9,10 @@ import UserRepo from "./repositories/UserRepo.ts";
 import SummaryService from "./services/SummaryService.ts";
 import mongoose from "mongoose";
 import AuthService from "./services/AuthenticationService.ts";
- 
+import * as dotenv from "dotenv"
+
+dotenv.config()
+
 // declare the app
 const app : Express = express();
 const port : Number = 3000;
@@ -18,8 +21,8 @@ const port : Number = 3000;
 app.use(express.json()); 
 //connect to the database
 const dbUrl :string | undefined = process.env.DB_URI || undefined
-if(dbUrl)mongoose.connect(dbUrl).then(()=>console.log('Connected to database!')).catch((error)=> console.error(error))
-else console.error("Failed to connect to database!")
+if(dbUrl)mongoose.connect(dbUrl).then(()=>console.log('Connected to database!')).catch((error)=> console.error("Error connecting to database!", error))
+else console.error("database url not defined!", dbUrl)
 
 //add depenedencies
 const summaryRepo : SummaryRepo = new SummaryRepo(); 

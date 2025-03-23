@@ -25,7 +25,7 @@ export default class AppRoutes{
         await this.summaryController.getUserSummaries(req, res); 
     }); 
 
-    // TO_FIX: endpoint sending errors via response
+    
     this.router.post('/summaries/transcribe',this.upload.single('file'), async(req: Request ,res: Response)=>{
         //specifies the file name in the field needs to be 'file'
         console.log(req.file);

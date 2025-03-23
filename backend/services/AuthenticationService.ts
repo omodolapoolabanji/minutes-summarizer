@@ -13,14 +13,15 @@ export default class AuthService{
         passport.use(
             new LocalStrategy(async (username:string,password: string, done)=>{
                try{ const user = await User.findOne({username} )
-                    if(!user || await user.verifyPassword(password) ) return done(null, false, {message: 'Invalid Credentials!'})
+                    if(!user || !await user.verifyPassword(password) ) {
+                        return done(null, false, {message: 'Invalid Credentials!'})}
                     else return done(null, user)
                 }
                 catch(error){
                     console.error(error)
                     return done(error)
                 }
-                 }           )
+})
         )
     }
 
@@ -36,6 +37,7 @@ export default class AuthService{
 
     async getTokens(user :IUser){
         const secret : string | undefined = process.env.TOKEN_SECRET || undefined
+
         if(secret) return  jwt.sign({username: user.username}, secret, {})
         else return null
     }
