@@ -6,7 +6,7 @@ import passport from "passport";
 import { User } from "../models/UserModel";
 
 export default class AuthenticationController{
-    //barebones naive implementation before actually enforcing encryption etc
+    
     userRepo : UserRepo; 
     authenticationService: AuthService
     constructor(userRepo : UserRepo, authService : AuthService ){

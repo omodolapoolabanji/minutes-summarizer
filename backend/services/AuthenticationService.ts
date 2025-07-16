@@ -38,7 +38,7 @@ export default class AuthService{
     async getTokens(user :IUser){
         const secret : string | undefined = process.env.TOKEN_SECRET || undefined
 
-        if(secret) return  jwt.sign({username: user.username}, secret, {})
+        if(secret) return  jwt.sign({username: user.username}, secret, {expiresIn: '1h'})
         else return null
     }
 
