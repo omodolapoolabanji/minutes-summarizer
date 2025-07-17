@@ -37,9 +37,7 @@ export default class AppRoutes{
         
         
     )
-    this.router.get('/summaries/test',   async (req: Request, res: Response)=>{ 
-        await this.summaryController.testSummaryEndpoint(req, res); 
-    })
+    
     this.router.get('/summaries/:id', async(req: Request, res: Response)=>{
         await this.summaryController.getSummaryById(req, res)
     })
@@ -56,7 +54,6 @@ export default class AppRoutes{
 
    getRoutes():express.Router{
         return this.router; 
-
    }
 
 }

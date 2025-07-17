@@ -22,7 +22,6 @@ export default class TranscribeService{
 
     initModel():void{
         this.model = new vosk.Model(this.MODEL_PATH); 
-        
     }
 
     async transcribeAudio(fileName?:string):Promise<string>{

@@ -20,10 +20,7 @@ export default class AuthService{
                 catch(error){
                     console.error(error)
                     return done(error)
-                }
-})
-        )
-    }
+                }}))}
 
     async register(username: string, password : string){
         try{const hashedPassword : string = await hash(password, 10); 

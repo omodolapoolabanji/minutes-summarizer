@@ -24,7 +24,7 @@ export default class AuthenticationController{
         catch(error){
             console.error(error)
         }
-}
+    }
     async signup(req: Request, res: Response){
         try{
             const {username, password} = req.body
@@ -44,7 +44,7 @@ export default class AuthenticationController{
             throw new Error(error); 
         }
     }
-
+    //TODO implement unregister endpoint
     async unregister(){
 
     }

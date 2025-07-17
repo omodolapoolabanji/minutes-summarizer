@@ -1,14 +1,13 @@
 import SummaryRepo from "../repositories/SummaryRepo";
 import { Request, Response } from "express";
 import TranscribeService from "../services/TranscribeService";
-import fs from "fs";
 import SummaryService from "../services/SummaryService";
 
 // this controller should work on summaries the user has saved 
 export default class SummaryController{
     summaryRepo : SummaryRepo; 
     transcribeService :TranscribeService; 
-    summaryService : SummaryService
+    summaryService : SummaryService;
     constructor(summaryRepo : SummaryRepo, transcribeService : TranscribeService, summaryService : SummaryService){
         this.summaryRepo = summaryRepo; 
         this.transcribeService = transcribeService; 
@@ -22,7 +21,8 @@ export default class SummaryController{
             return res.status(400).json({message: 'Error returning all summries!'})
         }
     }
-
+    
+    //TODO implement this endpoint
     async getSummaryById(req: Request, res: Response){
 
     }
@@ -47,14 +47,8 @@ export default class SummaryController{
             return res.status(400).json({message: 'Error transcribing audio data!'})
         }
     }
-    async testSummaryEndpoint(req: Request, res: Response){
-        try{
-            return res.send("This endpoint works I guess[?]"); }
-        catch(error){
-            return res.status(400).json({message:"there was an error trying to recieve test message from the server"}); 
-        }
-    }
-
+   
+    // wrote this a while ago and now I have no idea what this does
     async addToSummary(){
 
     }
