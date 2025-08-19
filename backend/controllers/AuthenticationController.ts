@@ -1,16 +1,12 @@
-import SummaryRepo from "../repositories/SummaryRepo";
-import UserRepo from "../repositories/UserRepo";
 import {NextFunction, Request, Response} from 'express'; 
 import AuthService from "../services/AuthenticationService";
 import passport from "passport";
-import { User } from "../models/UserModel";
 
 export default class AuthenticationController{
     
-    userRepo : UserRepo; 
+    
     authenticationService: AuthService
-    constructor(userRepo : UserRepo, authService : AuthService ){
-        this.userRepo = userRepo; 
+    constructor( authService : AuthService ){
         this.authenticationService = authService
     }
     async login(req: Request, res: Response, next: any){
@@ -35,18 +31,23 @@ export default class AuthenticationController{
             res.status(500).json({message: "Registration failed!"})
         }
     }
-    //TODO create route
+    
     async logout(req: Request, res : Response){
        try{ req.logOut(()=>{
             res.status(200).json({message : "logged out successfully!"})
         })}
         catch(error: any){
+            res.status(500).json({message: "Logout failed"})
             throw new Error(error); 
         }
     }
-    //TODO implement unregister endpoint
-    async unregister(){
-
+    
+    async unregister(req:Request , res: Response){
+        try{
+            res.status(200).json("Successfully unregistered!")
+        }catch(error:any){
+            res.status(500).json({message: "Unregister failed"})
+        }
     }
     
 }

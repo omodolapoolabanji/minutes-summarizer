@@ -3,9 +3,7 @@ import './loadEnv.ts'
 import AppRoutes from "./routes/AppRoutes.ts";
 import SummaryController from "./controllers/SummaryController.ts";
 import TranscribeService from "./services/TranscribeService.ts";
-import SummaryRepo from "./repositories/SummaryRepo.ts";
 import AuthenticationController from "./controllers/AuthenticationController.ts";
-import UserRepo from "./repositories/UserRepo.ts";
 import SummaryService from "./services/SummaryService.ts";
 import mongoose from "mongoose";
 import AuthService from "./services/AuthenticationService.ts";
@@ -25,13 +23,13 @@ if(dbUrl)mongoose.connect(dbUrl).then(()=>console.log('Connected to database!'))
 else console.error("database url not defined!", dbUrl)
 
 //add depenedencies
-const summaryRepo : SummaryRepo = new SummaryRepo(); 
-const userRepo:UserRepo = new UserRepo(); 
+
+
 const authService : AuthService = new AuthService(); 
 const transcribeService: TranscribeService = new TranscribeService(); 
 const summaryService : SummaryService = new SummaryService(); 
-const summaryController : SummaryController = new SummaryController(summaryRepo, transcribeService, summaryService);
-const authenticationController : AuthenticationController = new AuthenticationController(userRepo, authService); 
+const summaryController : SummaryController = new SummaryController( transcribeService, summaryService);
+const authenticationController : AuthenticationController = new AuthenticationController(authService); 
 const appRoutes : AppRoutes = new AppRoutes(summaryController,authenticationController ); 
 
 const router : express.Router = appRoutes.getRoutes(); 

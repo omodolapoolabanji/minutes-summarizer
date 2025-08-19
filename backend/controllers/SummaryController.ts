@@ -1,25 +1,18 @@
-import SummaryRepo from "../repositories/SummaryRepo";
 import { Request, Response } from "express";
 import TranscribeService from "../services/TranscribeService";
 import SummaryService from "../services/SummaryService";
 
 // this controller should work on summaries the user has saved 
 export default class SummaryController{
-    summaryRepo : SummaryRepo; 
     transcribeService :TranscribeService; 
     summaryService : SummaryService;
-    constructor(summaryRepo : SummaryRepo, transcribeService : TranscribeService, summaryService : SummaryService){
-        this.summaryRepo = summaryRepo; 
+    constructor( transcribeService : TranscribeService, summaryService : SummaryService){
         this.transcribeService = transcribeService; 
         this.summaryService = summaryService; 
     }
     // serves the frontend user summaries
     async getUserSummaries(req : Request, res : Response){
-        try{
-            return res.json(this.summaryRepo.getAllSummaries())
-        }catch(error){
-            return res.status(400).json({message: 'Error returning all summries!'})
-        }
+      
     }
     
     //TODO implement this endpoint

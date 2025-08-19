@@ -1,9 +1,9 @@
 import { compare, hash } from "bcryptjs";
-import { User, IUser } from "../models/UserModel";
+import { User, IUser } from "../models/User";
 import jwt from  "jsonwebtoken"  
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Request } from "express";
+
 export default class AuthService{
     constructor(){
         this.configurePassport(); 
@@ -23,8 +23,8 @@ export default class AuthService{
                 }}))}
 
     async register(username: string, password : string){
-        try{const hashedPassword : string = await hash(password, 10); 
-        const newUser = new User({username: username, password: hashedPassword}); 
+        try{ 
+        const newUser = new User({username: username, password: await this.hash(password)}); 
         newUser.save()}
         catch(error: any){
             if (error.code === '11000') throw new Error('User already exists in database')
@@ -32,10 +32,25 @@ export default class AuthService{
         }
     }
 
+    async hash(password : string):Promise<String>{
+        return await hash(password, 10)
+    }
+    
+    async unregister(username: string, password: string) {
+        try {
+            const result = await User.deleteOne({ username: username, password: await this.hash(password) });
+            if (result.deletedCount === 0) {
+                throw new Error('No user found with the provided username and password.');
+            }
+        } catch (error: any) {
+            throw new Error('Could not delete user from database. Something went wrong at this time!');
+        }
+    }
+
     async getTokens(user :IUser){
         const secret : string | undefined = process.env.TOKEN_SECRET || undefined
 
-        if(secret) return  jwt.sign({username: user.username}, secret, {expiresIn: '1h'})
+        if(secret) return  jwt.sign({username: user.username, userId: user._id.toString()}, secret, {expiresIn: '1h'})
         else return null
     }
 

@@ -3,6 +3,7 @@ import AuthenticationController from "../controllers/AuthenticationController";
 import * as express from 'express'
 import { Request, Response } from "express";
 import multer from "multer";
+import { verifyToken } from "../middleware/protectRoutes";
 
 export default class AppRoutes{
     summaryController : SummaryController;
@@ -21,7 +22,7 @@ export default class AppRoutes{
    }
 
    initSummaryRoutes(){
-    this.router.get('/summaries', async (req: Request, res: Response)=>{
+    this.router.get('/summaries', verifyToken,async (req: Request, res: Response)=>{
         await this.summaryController.getUserSummaries(req, res); 
     }); 
 
