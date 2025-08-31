@@ -1,3 +1,4 @@
+import { ISummary, summaryModel } from "../models/Summary";
 export default class SummaryService{
     promptHeader : string; 
     promptBody : string; 
@@ -36,4 +37,41 @@ export default class SummaryService{
             console.error("Error in getSummaryFromModel:", error);
         }
     }
+
+    async findAllSummaries(userId:any){
+        try{const summaries = await summaryModel.find({userId}).populate("user");
+        return summaries
+            }
+        catch(error){
+            throw new Error("Something went wrong retrieving the summaries");
+        }
+    }
+
+    async findSummaryById(id: any){
+        try{
+            return summaryModel.findById(id);
+        }
+        catch(error){
+            throw new Error("Cannot find summary by ID");
+        }
+    }
+
+    async addSummarytoDB(newSummary: any){
+        try{
+            
+            newSummary.save(); }
+        catch(error){
+            throw new Error("Could not save Summary ");
+        } 
+    }
+
+    async deleteSummary(id:any){
+        try{
+            summaryModel.deleteOne({_id:id});
+        }catch(error){
+            throw new Error("Summary could not be deleted");
+        }
+    }
+
+    
 }

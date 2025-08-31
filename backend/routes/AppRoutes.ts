@@ -4,6 +4,7 @@ import * as express from 'express'
 import { Request, Response } from "express";
 import multer from "multer";
 import { verifyToken } from "../middleware/protectRoutes";
+import { CustomRequest } from "../middleware/protectRoutes";
 
 export default class AppRoutes{
     summaryController : SummaryController;
@@ -22,12 +23,12 @@ export default class AppRoutes{
    }
 
    initSummaryRoutes(){
-    this.router.get('/summaries', verifyToken,async (req: Request, res: Response)=>{
+    this.router.get('/summaries', verifyToken,async (req: CustomRequest, res: Response)=>{
         await this.summaryController.getUserSummaries(req, res); 
     }); 
 
     
-    this.router.post('/summaries/transcribe',this.upload.single('file'), async(req: Request ,res: Response)=>{
+    this.router.post('/summaries/transcribe',verifyToken,this.upload.single('file'), async(req: CustomRequest ,res: Response)=>{
         //specifies the file name in the field needs to be 'file'
         console.log(req.file);
         try{await this.summaryController.transcribeAudio(req, res); }   
@@ -39,7 +40,7 @@ export default class AppRoutes{
         
     )
     
-    this.router.get('/summaries/:id', async(req: Request, res: Response)=>{
+    this.router.get('/summaries/:id', verifyToken, async(req: CustomRequest, res: Response)=>{
         await this.summaryController.getSummaryById(req, res)
     })
    }

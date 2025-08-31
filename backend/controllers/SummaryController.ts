@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
+import { CustomRequest } from "../middleware/protectRoutes";
 import TranscribeService from "../services/TranscribeService";
 import SummaryService from "../services/SummaryService";
+import { ISummary, summaryModel } from "../models/Summary";
+import { User } from "../models/User";
+import mongoose from "mongoose";
 
 // this controller should work on summaries the user has saved 
 export default class SummaryController{
@@ -11,13 +15,26 @@ export default class SummaryController{
         this.summaryService = summaryService; 
     }
     // serves the frontend user summaries
-    async getUserSummaries(req : Request, res : Response){
-      
+    async getUserSummaries(req : CustomRequest, res : Response){
+      try {
+        const summaries = await  this.summaryService.findAllSummaries(req.userId)
+        res.json(summaries)
+    }
+      catch(error){
+        res.status(400).json({message: 'Error returning summaries'})
+      }
     }
     
     //TODO implement this endpoint
-    async getSummaryById(req: Request, res: Response){
-
+    async getSummaryById(req: CustomRequest, res: Response){
+        try{
+            const summaryId = req.body.userId
+            const summary = await this.summaryService.findSummaryById(summaryId);
+            res.json(summary);
+        }
+        catch(error){
+            res.status(400).json({message: "Error returning summary by Id"});
+        }
     }
     
     // get the audio data from the frontend : POST req
@@ -41,11 +58,27 @@ export default class SummaryController{
         }
     }
    
-    // wrote this a while ago and now I have no idea what this does
-    async addToSummary(){
-
+    // User might decide to save the summary and we need to add it to the database when this happens
+    async addToSummary(req: CustomRequest, res: Response){
+        //validate the userId first
+        if(!req.userId|| !mongoose.Types.ObjectId.isValid(req.userId)){
+            return res.status(400).json("User is not valid!");
+        }
+        const summary = new summaryModel({
+            summaryHead: req.body.summaryHead,
+            summaryBody: req.body.summaryBody,
+            userId: new mongoose.Types.ObjectId(req.userId)});
+        await this.summaryService.addSummarytoDB(summary);
+        res.status(201).json({ message: 'Summary added successfully!' });
     }
-    async deleteFromSummary(){
+    //Delete from the Database 
+    async deleteFromSummary(req: Request, res: Response){
+        try{this.summaryService.deleteSummary(req.body.summaryId);
+            return res.status(200).json("Deleted Summary! ");}
+        catch(error){
+            return res.status(400).json("Delete Summary failed!")
+        }
+       
 
     }
     
