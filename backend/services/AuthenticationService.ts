@@ -25,10 +25,13 @@ export default class AuthService{
     async register(username: string, password : string){
         try{ 
         const newUser = new User({username: username, password: await this.hash(password)}); 
-        newUser.save()}
+        await newUser.save()
+        return {message: "User successfully registered!", error:false}
+            
+    }
         catch(error: any){
-            if (error.code === '11000') throw new Error('User already exists in database')
-            else throw new Error('Something went wrong registering the user!')
+            if (error.code === '11000') console.error('User already exists in database')
+            return {message: 'Something went wrong registering the user!', error: false}
         }
     }
 
@@ -38,12 +41,23 @@ export default class AuthService{
     
     async unregister(username: string, password: string) {
         try {
-            const result = await User.deleteOne({ username: username, password: await this.hash(password) });
-            if (result.deletedCount === 0) {
-                throw new Error('No user found with the provided username and password.');
+            const user  = await User.findOne({username: username})
+            if(!user){
+                console.error("User does not exist in the system!")
+                return "Wrong credentials"; 
             }
+            const valid = await compare(password, user.password)
+            if(!valid){
+                return "Wrong credentials"; 
+
+            }
+            const result = await User.deleteOne({_id:user._id});
+            if (result.deletedCount === 0) {
+                return ('No user found with the provided username and password.');
+            }
+            return "Successfully removed user!"
         } catch (error: any) {
-            throw new Error('Could not delete user from database. Something went wrong at this time!');
+            console.error('Could not delete user from database. Something went wrong at this time!', error);
         }
     }
 

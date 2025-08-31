@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from 'express';
 import AuthService from "../services/AuthenticationService";
 import passport from "passport";
 
+
 export default class AuthenticationController{
     
     
@@ -24,27 +25,27 @@ export default class AuthenticationController{
     async signup(req: Request, res: Response){
         try{
             const {username, password} = req.body
-            this.authenticationService.register(username, password)
-            res.status(200).json({message: "Registration successful!"})
+            const message = await this.authenticationService.register(username, password)
+            if (!message.error){
+                res.status(200).json({message: message.message})
+            }
+            else{
+                res.status(500).json({message: message.message})
+            }
+            
         }catch(error){
             console.error(error)
             res.status(500).json({message: "Registration failed!"})
         }
     }
     
-    async logout(req: Request, res : Response){
-       try{ req.logOut(()=>{
-            res.status(200).json({message : "logged out successfully!"})
-        })}
-        catch(error: any){
-            res.status(500).json({message: "Logout failed"})
-            throw new Error(error); 
-        }
-    }
+  
     
     async unregister(req:Request , res: Response){
         try{
-            res.status(200).json("Successfully unregistered!")
+            const {username, password} = req.body
+            const message = await this.authenticationService.unregister(username, password); 
+            res.status(200).json({message})
         }catch(error:any){
             res.status(500).json({message: "Unregister failed"})
         }

@@ -33,7 +33,7 @@ export function verifyToken(req:Request, res:Response, next: NextFunction){
         }
         
     }catch(error:any){
-        throw new Error("Something went wrong!")
+        console.error("Something went wrong!", error)
     }}
     next()
 }

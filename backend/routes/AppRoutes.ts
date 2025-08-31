@@ -52,6 +52,10 @@ export default class AppRoutes{
     this.router.post('/auth/login', async(req: Request, res: Response, next : any)=>{
         await this.authenticationController.login(req, res, next); 
     });
+   
+    this.router.post('/auth/unregister', async(req: Request, res: Response)=>{
+        await this.authenticationController.unregister(req, res); 
+    })
    }
 
    getRoutes():express.Router{

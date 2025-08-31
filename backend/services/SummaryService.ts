@@ -43,7 +43,7 @@ export default class SummaryService{
         return summaries
             }
         catch(error){
-            throw new Error("Something went wrong retrieving the summaries");
+            console.error("Something went wrong retrieving the summaries", error);
         }
     }
 

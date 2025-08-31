@@ -17,15 +17,16 @@ export default class SummaryController{
     // serves the frontend user summaries
     async getUserSummaries(req : CustomRequest, res : Response){
       try {
-        const summaries = await  this.summaryService.findAllSummaries(req.userId)
+        const summaries = await this.summaryService.findAllSummaries(req.userId)
         res.json(summaries)
     }
       catch(error){
         res.status(400).json({message: 'Error returning summaries'})
+        console.error(error)
       }
     }
     
-    //TODO implement this endpoint
+    
     async getSummaryById(req: CustomRequest, res: Response){
         try{
             const summaryId = req.body.userId

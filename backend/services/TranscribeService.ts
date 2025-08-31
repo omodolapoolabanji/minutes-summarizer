@@ -78,7 +78,7 @@ export default class TranscribeService{
 
     cleanUp(): void{ 
         if (!this.FILE_NAME){
-            throw new Error('File path not specified for cleanup! ')
+            console.error('File path not specified for cleanup! ')
         }
         fs.unlink(this.FILE_NAME, (err)=>{
             if(err){
