@@ -59,17 +59,19 @@ export default class SummaryService{
     async addSummarytoDB(newSummary: any){
         try{
             
-            newSummary.save(); }
+            await newSummary.save();
+            return newSummary._id; 
+         }
         catch(error){
-            throw new Error("Could not save Summary ");
+            console.error("Could not save Summary", error);
         } 
     }
 
     async deleteSummary(id:any){
         try{
-            summaryModel.deleteOne({_id:id});
+            await summaryModel.deleteOne({_id:id});
         }catch(error){
-            throw new Error("Summary could not be deleted");
+            console.error("Summary could not be deleted", error);
         }
     }
 

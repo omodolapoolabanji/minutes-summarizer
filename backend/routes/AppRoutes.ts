@@ -5,6 +5,8 @@ import { Request, Response } from "express";
 import multer from "multer";
 import { verifyToken } from "../middleware/protectRoutes";
 import { CustomRequest } from "../middleware/protectRoutes";
+import expressWs from "express-ws";
+import fs from "fs/promises"; 
 
 export default class AppRoutes{
     summaryController : SummaryController;
@@ -16,7 +18,7 @@ export default class AppRoutes{
         this.summaryController = summaryController; 
         this.authenticationController = authenticationController; 
         this.router = express.Router(); 
-        this.upload = multer({dest: 'backend/static/audio_data'});
+        this.upload = multer({dest: 'static/audio_data'});
         this.initAuthenticationRoutes() ;
         this.initSummaryRoutes();
         
@@ -42,6 +44,46 @@ export default class AppRoutes{
     
     this.router.get('/summaries/:id', verifyToken, async(req: CustomRequest, res: Response)=>{
         await this.summaryController.getSummaryById(req, res)
+    })
+
+    this.router.post('/summaries/add', verifyToken, async(req:CustomRequest, res: Response)=>{
+        await this.summaryController.addToSummary(req, res); 
+    })
+    this.router.delete('/summaries/delete/:id',verifyToken, async(req: Request, res: Response)=>{
+        await this.summaryController.deleteFromSummary(req, res); 
+    })
+
+    this.router.ws('/summaries/wsstream', verifyToken, (ws : any, req: any)=>{
+        let buffer: Buffer[] = []; 
+        ws.on("message", async (msg: Buffer | String)=>{
+
+            if(typeof(msg) === "string"){
+                if(msg==="END"){
+                    console.log("Processing all read chunks.")
+                    let finalBuffer = Buffer.concat(buffer); // concatenate all the audio chunks from the ws stream 
+                    // need to do something with this. 
+                    const filePath = `static/audio_data/audio_${Date.now()}.wav`; 
+                    await fs.writeFile(filePath, finalBuffer); 
+                    console.log("Wrote buffer to file"); 
+                    const transcription = await this.summaryController.transcribeService.transcribeAudio(filePath);
+                    const response  = await this.summaryController.summaryService.getSummaryFromModel(transcription); 
+                    this.summaryController.transcribeService.cleanUp(); 
+                    ws.send(response);
+                }
+                 
+                
+                else{
+                    console.log(`Recieved message ${msg}`)
+                }
+            }else{
+                // assume this is the audio binary chunk
+                buffer.push(Buffer.from(msg))
+            }
+
+        })
+        ws.on("close", ()=>{
+            console.log("Client closed connection")
+        })
     })
    }
 

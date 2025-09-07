@@ -29,7 +29,7 @@ export default class SummaryController{
     
     async getSummaryById(req: CustomRequest, res: Response){
         try{
-            const summaryId = req.body.userId
+            const summaryId = req.params.id
             const summary = await this.summaryService.findSummaryById(summaryId);
             res.json(summary);
         }
@@ -69,12 +69,13 @@ export default class SummaryController{
             summaryHead: req.body.summaryHead,
             summaryBody: req.body.summaryBody,
             userId: new mongoose.Types.ObjectId(req.userId)});
-        await this.summaryService.addSummarytoDB(summary);
-        res.status(201).json({ message: 'Summary added successfully!' });
+        const summaryId = await this.summaryService.addSummarytoDB(summary);
+        res.status(201).json({ message: 'Summary added successfully!' , summaryId});
     }
     //Delete from the Database 
     async deleteFromSummary(req: Request, res: Response){
-        try{this.summaryService.deleteSummary(req.body.summaryId);
+        try{
+            await this.summaryService.deleteSummary(req.params.id);
             return res.status(200).json("Deleted Summary! ");}
         catch(error){
             return res.status(400).json("Delete Summary failed!")

@@ -13,8 +13,8 @@ export default class TranscribeService{
     model: any; 
 
     constructor(fileName ?: string, sampleRate: number = 16000, bufferSize : number = 4000){
-        this.MODEL_PATH = `backend/resources/vosk-models/${this.MODEL_NAME}`;
-        this.FILE_NAME = 'backend/static/audio_data/' + fileName; 
+        this.MODEL_PATH = `resources/vosk-models/${this.MODEL_NAME}`;
+        this.FILE_NAME = 'static/audio_data/' + fileName; 
         this.SAMPLE_RATE = sampleRate; 
         this.BUFFER_SIZE = bufferSize; 
         vosk.setLogLevel(0); 
@@ -33,7 +33,7 @@ export default class TranscribeService{
             console.error("No vosk models specified for transcription handling!")
         }
         else if(fileName){
-            this.FILE_NAME = 'backend/static/audio_data/'+fileName
+            this.FILE_NAME = 'static/audio_data/'+fileName
         }
         //checks for whether the specified model/filename exist in the resource directory
         console.log("filename "+ this.FILE_NAME, "model path "+this.MODEL_PATH)
@@ -43,7 +43,8 @@ export default class TranscribeService{
                 console.error("Audio file not found in specified directory!")
             }
             else{
-                console.error('Vosk Model not found in required path!'); 
+                console.error('Vosk Model not found in specified path!'); 
+                 
             }
             
         }
